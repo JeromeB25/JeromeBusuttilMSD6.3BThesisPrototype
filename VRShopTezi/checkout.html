@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout</title>
+  <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+</head>
+<body style="margin: 0; background-color: #1a1a1a">
+  <a-scene>
+    <!-- Background -->
+    <a-sky src="images/room.png" rotation="0 -90 0"></a-sky>
+
+    <!-- LIGHTS -->
+    <a-entity light="type: ambient; intensity: 1.2; color: #ffffff"></a-entity>
+    <a-entity light="type: directional; intensity: 0.8" position="0 4 -1"></a-entity>
+
+    <!-- ASSETS -->
+    <a-assets>
+      <audio id="bg-music" src="sounds/music.mp3"></audio>
+      <audio id="click-sound" src="sounds/pop.flac"></audio>
+    </a-assets>
+
+    <!-- Background Music -->
+    <a-sound id="backgroundSound" src="#bg-music" loop="true" volume="0.5"></a-sound>
+
+    <!-- CAMERA -->
+    <a-entity camera position="0 2 0" look-controls>
+      <a-cursor color="#fff"></a-cursor>
+    </a-entity>
+
+    <!-- Checkout UI -->
+    <a-entity id="checkoutUI" position="0 2 -3">
+      <a-text id="cartItems" value="Cart: 0 items" color="#fff" align="center" width="6" position="0 0.5 0"></a-text>
+
+      <a-plane id="confirmBtn" position="0 0 -0.01" width="2" height="0.4" color="#4CAF50" class="clickable sound-click">
+        <a-text value="Confirm Purchase" color="#fff" align="center" width="3" position="0 0 0.01"></a-text>
+      </a-plane>
+
+      <a-plane id="backBtn" position="0 -0.6 -0.01" width="2" height="0.4" color="#f44336" class="clickable sound-click" link="href: index.html">
+        <a-text value="Back to Shop" color="#fff" align="center" width="3" position="0 0 0.01"></a-text>
+      </a-plane>
+    </a-entity>
+
+    <!-- Thank You Message and Continue Shopping Button -->
+    <a-entity id="thankYouSection" visible="false" position="0 2 -3">
+      <a-text value="Thank you for your purchase!" color="#fff" align="center" width="6" position="0 0.5 0"></a-text>
+
+      <a-plane id="continueBtn" position="0 -0.2 -0.01" width="2" height="0.4" color="#2196F3" class="clickable sound-click" link="href: index.html">
+        <a-text value="Continue Shopping" color="#fff" align="center" width="3" position="0 0 0.01"></a-text>
+      </a-plane>
+    </a-entity>
+
+    <!-- SCRIPTS -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const cartItemsText = document.querySelector('#cartItems');
+        const confirmBtn = document.querySelector('#confirmBtn');
+        const checkoutUI = document.querySelector('#checkoutUI');
+        const thankYouSection = document.querySelector('#thankYouSection');
+
+        let cartCount = localStorage.getItem('cartCount') ? parseInt(localStorage.getItem('cartCount')) : 0;
+        cartItemsText.setAttribute('value', 'Cart: ' + cartCount + ' items');
+
+        confirmBtn.addEventListener('click', () => {
+          // Clear cart
+          localStorage.setItem('cartCount', 0);
+          // Hide checkout UI
+          checkoutUI.setAttribute('visible', false);
+          // Show thank you + continue shopping
+          thankYouSection.setAttribute('visible', true);
+        });
+      });
+
+      // Background Music after first click
+      document.addEventListener('DOMContentLoaded', () => {
+        const bgSound = document.querySelector('#backgroundSound');
+        const clickToPlay = () => {
+          if (bgSound && !bgSound.components.sound.isPlaying) {
+            bgSound.components.sound.playSound();
+            window.removeEventListener('click', clickToPlay);
+          }
+        };
+        window.addEventListener('click', clickToPlay);
+      });
+
+      // Sound click for all buttons
+      AFRAME.registerComponent('sound-click', {
+        init: function () {
+          const el = this.el;
+          el.addEventListener('click', () => {
+            const sound = document.querySelector('#click-sound');
+            if (sound) sound.play();
+          });
+        }
+      });
+    </script>
+  </a-scene>
+</body>
+</html>

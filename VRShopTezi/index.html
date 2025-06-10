@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VR Shop - Menu</title>
+  <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+  <script>
+    AFRAME.registerComponent('hover-animate', {
+      init: function () { 
+        var el = this.el;
+        el.addEventListener('mouseenter', function () {
+          el.setAttribute('scale', '1.05 1.05 1.05');
+        });
+        el.addEventListener('mouseleave', function () {
+          el.setAttribute('scale', '1 1 1');
+        });
+      }
+    });
+
+    // Override default FOV to zoom out the view
+    AFRAME.registerComponent('custom-fov', {
+      init: function () {
+        this.el.getObject3D('camera').fov = 60; // Lower FOV = zoomed out (default is ~80)
+        this.el.getObject3D('camera').updateProjectionMatrix();
+      }
+    });
+  </script>
+</head>
+<body>
+  <a-scene>
+    <!-- 360° Background -->
+    <a-assets>
+      <img id="room360" src="images/room.png" />
+      <img id="logo" src="images/Logo.png" />
+      <img id="cart" src="images/cartwhite.png" />
+      <img id="hat" src="images/image 2.png" />
+      <img id="shirt" src="images/tShirt-frontside.png" />
+      <img id="hoodie" src="images/hoodie.png" />
+      <img id="pants" src="images/pants.png" />
+    </a-assets>
+
+    <a-sky src="#room360" rotation="0 -90 0"></a-sky>
+
+    <!-- Camera with custom FOV -->
+    <a-entity camera look-controls custom-fov position="0 2 0">
+      <a-cursor 
+        color="#fff" 
+        fuse="true" 
+        fuse-timeout="2000">
+      </a-cursor>
+    </a-entity>
+
+    <!-- UI Menu -->
+    <a-entity position="0 2 -3">
+      <a-image src="#logo" width="0.6" height="0.15" position="-2 1 0" link="href: index.html"></a-image>
+      <a-image src="#cart" width="0.2" height="0.2" position="2 1 0"></a-image>
+
+      <a-plane color="#ccc" width="0.7" height="0.9" position="-1.5 0 0" link="href: hat.html" hover-animate>
+        <a-image src="#hat" width="0.5" height="0.5" position="0 0 0.01"></a-image>
+      </a-plane>
+
+      <a-plane color="#ccc" width="0.7" height="0.9" position="-0.5 0 0" link="href: shirt.html" hover-animate>
+        <a-image src="#shirt" width="0.5" height="0.5" position="0 0 0.01"></a-image>
+      </a-plane>
+
+      <a-plane color="#ccc" width="0.7" height="0.9" position="0.5 0 0" link="href: hoodie.html" hover-animate>
+        <a-image src="#hoodie" width="0.5" height="0.5" position="0 0 0.01"></a-image>
+      </a-plane>
+
+      <a-plane color="#ccc" width="0.7" height="0.9" position="1.5 0 0" link="href: pants.html" hover-animate>
+        <a-image src="#pants" width="0.5" height="0.5" position="0 0 0.01"></a-image>
+      </a-plane>
+    </a-entity>
+
+    <!-- Gaze-Based VR Instructions -->
+    <a-entity position="0 0.8 -2.5">
+      <a-plane 
+        color="#222" 
+        width="2.4" 
+        height="1.2" 
+        opacity="0.85" 
+        material="shader: flat">
+        <a-text
+          value="INSTRUCTIONS\n\n• Move your head to look around\n• Focus the white dot on an item\n• Keep looking for 2 seconds to select\n•"
+          color="#fff"
+          align="center"
+          width="2"
+          position="0 0.3 0.01"
+          wrap-count="38"
+          baseline="top"
+          line-height="55">
+        </a-text>
+      </a-plane>
+    </a-entity>
+
+  </a-scene>
+</body>
+</html>
